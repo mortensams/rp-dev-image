@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     curl \
+    bsdtar \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python 3.11 as default
@@ -34,15 +35,30 @@ USER coder
 # Create extensions directory
 RUN mkdir -p /home/coder/.local/share/code-server/extensions
 
-# Pre-install Microsoft Python VSCode extensions
-RUN code-server --install-extension ms-python.python --force || true
-RUN code-server --install-extension ms-python.vscode-pylance --force || true
-RUN code-server --install-extension ms-python.debugpy --force || true
+# Download and install VSCode extensions manually from marketplace
+# Python extension
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/python/2024.16.1/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/ms-python.python-2024.16.1
 
-# Pre-install SQLTools and drivers
-RUN code-server --install-extension mtxr.sqltools --force || true
-RUN code-server --install-extension mtxr.sqltools-driver-mssql --force || true
-RUN code-server --install-extension Evidence.sqltools-duckdb-driver --force || true
+# Pylance extension
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/vscode-pylance/2024.10.1/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/ms-python.vscode-pylance-2024.10.1
+
+# Python Debugger extension
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/debugpy/2024.12.0/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/ms-python.debugpy-2024.12.0
+
+# SQLTools extension
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/mtxr/vsextensions/sqltools/0.28.3/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/mtxr.sqltools-0.28.3
+
+# SQLTools SQL Server driver
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/mtxr/vsextensions/sqltools-driver-mssql/0.5.1/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/mtxr.sqltools-driver-mssql-0.5.1
+
+# SQLTools DuckDB driver
+RUN curl -JL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/Evidence/vsextensions/sqltools-duckdb-driver/0.2.1/vspackage | bsdtar -xvf - extension \
+    && mv extension /home/coder/.local/share/code-server/extensions/Evidence.sqltools-duckdb-driver-0.2.1
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
