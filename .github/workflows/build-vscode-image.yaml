@@ -6,7 +6,7 @@ on:
       - master
       - main
     paths:
-      - 'vscode/Dockerfile'
+      - 'Dockerfile'
       - '.github/workflows/build-vscode-image.yaml'
   workflow_dispatch:
 
@@ -45,8 +45,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./vscode
-          file: ./vscode/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
