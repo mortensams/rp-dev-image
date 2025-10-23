@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
+# Remove externally-managed file to allow pip installs (safe in containers)
+RUN rm -f /usr/lib/python3.11/EXTERNALLY-MANAGED
+
 # Upgrade pip
 RUN pip3 install --no-cache-dir --upgrade pip
 
