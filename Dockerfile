@@ -31,15 +31,18 @@ RUN pip3 install --no-cache-dir \
 
 USER coder
 
+# Create extensions directory
+RUN mkdir -p /home/coder/.local/share/code-server/extensions
+
 # Pre-install Microsoft Python VSCode extensions
-RUN code-server --install-extension ms-python.python \
-    && code-server --install-extension ms-python.vscode-pylance \
-    && code-server --install-extension ms-python.debugpy
+RUN code-server --install-extension ms-python.python --force || true
+RUN code-server --install-extension ms-python.vscode-pylance --force || true
+RUN code-server --install-extension ms-python.debugpy --force || true
 
 # Pre-install SQLTools and drivers
-RUN code-server --install-extension mtxr.sqltools \
-    && code-server --install-extension mtxr.sqltools-driver-mssql \
-    && code-server --install-extension Evidence.sqltools-duckdb-driver
+RUN code-server --install-extension mtxr.sqltools --force || true
+RUN code-server --install-extension mtxr.sqltools-driver-mssql --force || true
+RUN code-server --install-extension Evidence.sqltools-duckdb-driver --force || true
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
